@@ -1,0 +1,79 @@
+<?php
+/** @var \AHT\CustomCheckout\Block\Delivery $block */
+    $deliveryInfo = $block->getDeliveryInfo();
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+    $FormKey = $objectManager->get('Magento\Framework\Data\Form\FormKey'); 
+?>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= __('Delivery info')?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <button id="button">
+        <span><?= $block->escapeHtml(__('Edit')) ?></span>
+        </button>
+        <div class="admin__page-section-item">
+            <div class="admin__page-section-item-title">
+                <span class="title"><?= __('Delivery date')?></span>
+            </div>
+            <div class="admin__page-section-item-content">
+            <!-- code here -->
+                <?php
+                    $date = new DateTime($deliveryInfo->getDeliveryData());
+                    echo $date->format('d/m/Y');
+                ?>
+            </div>
+        </div>
+        <div class="admin__page-section-item">
+            <div class="admin__page-section-item-title">
+                <span class="title"><?= __('Delivery comment')?></span>
+            </div>
+            <div class="admin__page-section-item-content">
+            <!-- code here -->
+            <?= $deliveryInfo->getDeliveryComment()?>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="modal">
+    <div class="modal-body-content">
+        <form action="<?= $block->getUrl('delivery/order/save') ?>" method="post" id="aht-form"  data-bind="scope: 'aht-form'" data-mage-init='{"validation":{}}'>
+        
+            <input name = "form_key" type = "hidden" value="<?php echo $FormKey->getFormKey();?>" /> 
+            <input type = "hidden" name="order_id" value="<?php echo $this->getRequest()->getParam('order_id');?>" /> 
+
+            <label class="label admin__field-label" for=""><span class="">Date</span></label>
+            <input type="date" name = "date_shipping"class="input-text admin__control-text" >
+            <label class="label admin__field-label" for=""><span class="">Note</span></label>
+            <input type="textarea" name="note_shipping" class="input-text admin__control-text">
+                       
+            <input type="submit">
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    require([
+        "jquery",
+        "Magento_Ui/js/modal/modal"
+    ],function($, modal) {
+
+        var options = {
+            type: 'popup',
+            responsive: true,
+            title: 'Edit Infomation',
+            buttons: [{
+                text: $.mage.__('Close'),
+                class: '',
+                click: function () {
+                    this.closeModal();
+                }
+            }]
+        };
+
+        var popup = modal(options, $('#modal'));
+        $("#button").click(function() {
+            $('#modal').modal('openModal');
+        });
+    });
+</script>
